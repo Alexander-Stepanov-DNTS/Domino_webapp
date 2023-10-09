@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Show</title>
+</head>
+<body>
+    <form>
+
+        <div th:each="knuckle : ${gamePVEAccess.getPlayersKnucklesToPut()}">
+            <p th:text="${knuckle.getOnePart()}">knuckle</p>
+            <p th:text="${knuckle.getSecondPart()}">knuckle</p>
+        </div>
+
+        <div th:each="knuckle : ${gamePVEAccess.getPlayersKnucklesNotToPut()}">
+            <p th:text="${knuckle.getOnePart()}">knuckle</p>
+            <p th:text="${knuckle.getSecondPart()}">knuckle</p>
+        </div>
+
+        <div th:each="knuckle : ${gamePVEAccess.getSequenceOnBoard()}">
+            <p th:text="${knuckle.getOnePart()}">knuckle</p>
+            <p th:text="${knuckle.getSecondPart()}">knuckle</p>
+        </div>
+
+        <div><p th:text="${gamePVEAccess.getNumOfCompKnuckles()}">knuckle</p> </div>
+    </form>
+
+    <form th:method="PATCH" th:action="@{/domino/update}" th:object="${gamePVEAccess}">
+        <label for="getplayersturn">Enter num: </label>
+        <input type="text" th:field="*{playersTurn}" id="getplayersturn" class="form-control"/>
+
+        <script th:inline="javascript">
+            var val = /*[[${gamePVEAccess.getSequenceOnBoard()}]]*/ 'defalt';
+            console.log(val);
+        </script>
+        <br/>
+        <input type="submit" value="Update!"/>
+    </form>
+
+</body>
+</html>

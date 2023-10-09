@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>Domino Suai</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body, div, span, h1, h2, h3, h4, h5, h6, p, a, ul, li {
+
+            margin: 0;
+            padding: 0;
+            border: 0;
+            font-size: 100%;
+            vertical-align: baseline;
+        }
+
+        body {
+            font-family: Verdana, Arial, sans-serif;
+            background-color: #f7f7f7;
+        }
+
+        #header {
+            background-color: #93b874;
+        }
+
+        #header h1 {
+            font-size: 24px;
+            text-transform: uppercase;
+            font-weight: bold;
+            padding: 30px 30px 30px 10px;
+            clear: both;
+        }
+
+        #nav {
+            background-color: #8db071;
+            border-top: 1px solid #ccc;
+            border-bottom: 1px solid #ccc;
+        }
+
+        #nav li {
+            float: left;
+            list-style: none;
+        }
+
+        #nav a {
+            display: block;
+            color: black;
+            padding: 10px 25px;
+            text-decoration: none;
+            border-right: 1px solid #ccc;
+        }
+
+        #nav li:last-child a {
+            border-right: none;
+        }
+
+        #nav a:hover {
+            font-weight: bold;
+        }
+
+        #nav:after {
+            content: " ";
+            display: table;
+            clear: both;
+        }
+
+        .wrapper {
+            background-color: #f7f7f7;
+        }
+
+        .aside h2 {
+            font-size: 0.95em;
+            margin-top: 15px;
+        }
+
+        .aside h3 {
+            font-size: 0.85em;
+            margin-top: 10px;
+        }
+
+        .aside p, .aside li {
+            font-size: .75em;
+            margin-top: 10px;
+        }
+
+        .aside li {
+            list-style-type: none;
+        }
+
+        #sidebar1 {
+            float: left;
+            width: 20%;
+            padding: 0 10px 0 20px;
+        }
+
+        #sidebar2 {
+            float: right;
+            width: 20%;
+            padding: 0 20px 0 10px;
+        }
+
+        #article {
+            text-align: center;
+            background-color: #fafafa;
+            border-left: 1px solid #ccc;
+            border-right: 1px solid #ccc;
+            border-bottom: 1px solid #ccc;
+            margin-left: 20%;
+            margin-right: 20%;
+            padding: 15px;
+            width: 60%;
+        }
+
+        #article:after {
+            clear: both;
+            display: table;
+            content: '';
+        }
+
+        #article h2 {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+        }
+
+        #article p {
+            line-height: 150%;
+            margin-bottom: 15px;
+        }
+
+        #footer {
+            border-top: 1px solid #ccc;
+            font-size: .8em;
+            text-align: center;
+            padding: 10px 10px 10px 10px;
+            background-color: #f7f7f7;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+
+        #nav ul, #header h1, .wrapper, #footer p {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .wrapper, #nav, #header, #footer {
+            min-width: 768px;
+        }
+        #savebutton {
+            background-color: #8db071;
+            margin: 5px auto;
+            display: block;
+            border-radius: 3px;
+            width: 200px;
+            height: 50px;
+            font-size: 24px;
+        }
+        #update {
+            background-color: #8db071;
+            margin: 0 auto;
+            display: block;
+            border-radius: 3px;
+            width: 200px;
+            height: 50px;
+            font-size: 24px;
+        }
+        .myCanvas {
+            padding: 2px;
+            border: 1px solid #ccc;
+        }
+        .hide {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div id="header">
+    <h1>Domino Suai</h1>
+    <div id="nav">
+        <ul>
+            <li><a href="/domino/MainPage">Main page</a></li>
+            <li><a href="/domino/HistoryOfDomino">History of Domino</a></li>
+            <li><a href="/domino/StartGame">Start game</a></li>
+        </ul>
+    </div>
+</div>
+
+<div class="wrapper">
+
+        <div id="sidebar1" class="aside">
+            <h2>Hints for the game:</h2>
+            <p> Click on the raised knuckle to make a move</p>
+            <p> Think over your moves in advance.</p>
+            <p> Draw conclusions about the opponent's knuckles, according to his moves.</p>
+            <br>
+            <button type="submit" id="savebutton" oncontextmenu="return false">Save your game</button>
+
+        </div>
+
+    <form th:method="PATCH" th:action="@{/domino/update}" th:object="${gamePVEAccess}">
+        <div id="sidebar2" class="aside">
+            <h2>This is form with the number of your knuckle, you want to put:</h2>
+            <br>
+            <label for="getplayersturn">Player will make move with knuckle of this number: </label>
+            <input type="text" th:field="*{playersTurn}" id="getPlayersTurn"/>
+            <input type="submit" value="Update!" class="hide" id="send"/>
+            <br>
+            <form>
+                <br>
+                <button type="button" value="Update!" id="update"> Update </button>
+            </form>
+            <br>
+            <br>
+            <form>
+                <p>Game protocol:</p>
+                <p th:text="${gamePVEAccess.getProtokol()}">VALUE</p>
+            </form>
+
+        </div>
+
+        <div id="article">
+            <canvas id="myCanvas" width="780" height="700"
+                    style="background-color:#839475; border: 1px solid #ccc;">
+                Ваш браузер не поддерживает Canvas
+            </canvas>
+
+            <script th:inline="javascript">
+                var canvas = document.getElementById("myCanvas"),
+                    context = canvas.getContext("2d");
+
+                // Массив фигур, которыми мы можем походить
+                var figures = [];
+                var indexesOfFigures = [];
+                var ind;
+
+                drawBoard();
+
+                /*test ();
+
+                function test () {
+                    let kn11 = new Knuckle(6, 4);
+                    let kn12 = new Knuckle(6, 6);
+                    let kn13 = new Knuckle(1, 6);
+                    let arr1 = [kn11, kn12, kn13];
+
+                    let kn21 = new Knuckle(1, 2);
+                    let kn22 = new Knuckle(3, 4);
+                    let kn23 = new Knuckle(5, 6);
+                    let arr2 = [kn21, kn22, kn23];
+
+                    let kn31 = new Knuckle(6, 4);
+                    let kn32 = new Knuckle(6, 6);
+                    let kn33 = new Knuckle(1, 6);
+                    let kn34 = new Knuckle(3, 1);
+                    let kn35 = new Knuckle(3, 3);
+                    let kn36 = new Knuckle(3, 5);
+                    let kn37 = new Knuckle(5, 4);
+                    let kn38 = new Knuckle(4, 0);
+                    let kn39 = new Knuckle(0, 1);
+                    let kn310 = new Knuckle(1, 2);
+                    let kn311 = new Knuckle(2, 0);
+                    let kn312 = new Knuckle(0, 5);
+                    let kn313 = new Knuckle(5, 1);
+                    let kn314 = new Knuckle(1, 1);
+                    let knn31 = new Knuckle(1, 4);
+                    let knn32 = new Knuckle(4, 4);
+                    let knn33 = new Knuckle(4, 3);
+                    let knn34 = new Knuckle(3, 0);
+                    let knn35 = new Knuckle(0, 0);
+                    let knn36 = new Knuckle(0, 6);
+
+                    let arr3 = [kn31, kn32, kn33, kn34, kn35, kn36, kn37, kn38, kn39, kn310, kn311, kn312, kn313, kn314, knn31, knn32, knn33, knn34, knn35, knn36];
+
+                    let num = 13;
+
+                    drawKnuckles(arr1, arr2, num);
+
+                    drawSequenceOnTheBoard(arr3, 13);
+                }
+                 */
+
+                function drawBoard() {
+                    //  Костяшки игрока которыми можно походить
+                    var userKnucklesToPut = /*[[${gamePVEAccess.getPlayersKnucklesToPut()}]]*/ 'defalt';
+                    console.log(userKnucklesToPut);
+
+                    //  Костяшки игрока, которыми походить нельзя
+                    var userKnucklesNotToPut = /*[[${gamePVEAccess.getPlayersKnucklesNotToPut()}]]*/ 'defalt';
+                    console.log(userKnucklesNotToPut);
+
+                    //  Последовательность выложенных на стол костяшек
+                    var sequenceOfKnuckles = /*[[${gamePVEAccess.getSequenceOnBoard()}]]*/ 'defalt';
+                    console.log(sequenceOfKnuckles);
+
+                    //  Количество костяшек у компьютера
+                    var numOfKnucklesOfComp = /*[[${gamePVEAccess.getNumOfCompKnuckles()}]]*/ 'defalt';
+                    console.log(numOfKnucklesOfComp);
+
+                    // Индекс центральной костяшки для отрисовки
+                    var indexOfStartKnuckle = /*[[${gamePVEAccess.getIndexOfStartInSequence()}]]*/ 'defalt';
+                    console.log(indexOfStartKnuckle);
+
+                    drawKnuckles(userKnucklesToPut, userKnucklesNotToPut, numOfKnucklesOfComp);
+
+                    drawSequenceOnTheBoard(sequenceOfKnuckles, indexOfStartKnuckle);
+                }
+
+                function addInd() {
+                    document.getElementById("getPlayersTurn").innerHTML = ind;
+                }
+
+                function drawKnuckles(userKnucklesToPut, userKnucklesNotToPut, numOfKnucklesOfComp) {
+                    // Количесство костяшек которые можно положить для отрисовки
+                    var numOfKnucklesToPut = userKnucklesToPut.length;
+
+                    // Количесство костяшек которые нельзя положить для отрисовки
+                    var numOfKnucklesNotToPut = userKnucklesNotToPut.length;
+
+                    // Текущая координата x для отрисовки
+                    var width = (canvas.width - ((numOfKnucklesToPut + numOfKnucklesNotToPut) * 50)) / 2;
+                    // Текущий индекс костяшки
+                    var curIndex = 0;
+
+                    console.log("what in userKnuckle" + userKnucklesToPut);
+
+                    userKnucklesToPut.forEach(f => {
+                        drawKnuckleToPut(width, 550, f.onePart, f.secondPart, curIndex);
+                        // Увеличиваем координату отрисовки
+                        width = width + 50;
+                        curIndex++;
+                    })
+
+                    userKnucklesNotToPut.forEach(f => {
+                        drawKnuckleNotToPut(width, 600, f.onePart, f.secondPart);
+                        // Увеличиваем координату отрисовки
+                        width = width + 50;
+                        curIndex++;
+                    })
+
+                    width = (canvas.width - (numOfKnucklesOfComp * 50)) / 2;
+                    for (let i = 0; i != numOfKnucklesOfComp; i++) {
+                        drawCompKnuckle(width, 20);
+                        // Увеличиваем координату отрисовки
+                        width = width + 50;
+                    }
+                }
+
+                function drawKnuckleToPut(x, height, leftpart, rightpart, curIndex) {
+
+                    // Создаем фигуру чтобы иметь возможность обрабатывать нажатия игрока
+                    let rectangle = new Path2D();
+                    rectangle.rect(x, height, 40, 80);
+                    rectangle.id = curIndex;
+                    figures[curIndex] = rectangle;
+                    console.log(curIndex);
+                    indexesOfFigures[curIndex] = curIndex;
+                    // Высота на котороый будет отрисована костяшка
+                    let y = height;
+
+                    // отрисовка первой части костяшки
+                    context.strokeRect(x, y, 40, 40);
+                    switch (leftpart) {
+                        case 0:
+                            break;
+                        case 1 :
+                            context.strokeRect(x + 19, y + 19, 2, 2);
+                            break;
+                        case 2 :
+                            context.strokeRect(x + 19, y + 13, 2, 2);
+                            context.strokeRect(x + 19, y + 26, 2, 2);
+                            break;
+                        case 3 :
+                            context.strokeRect(x + 19, y + 10, 2, 2);
+                            context.strokeRect(x + 19, y + 20, 2, 2);
+                            context.strokeRect(x + 19, y + 30, 2, 2);
+                            break;
+                        case 4 :
+                            context.strokeRect(x + 13, y + 13, 2, 2);
+                            context.strokeRect(x + 25, y + 13, 2, 2);
+                            context.strokeRect(x + 13, y + 26, 2, 2);
+                            context.strokeRect(x + 25, y + 26, 2, 2);
+                            break;
+                        case 5 :
+                            context.strokeRect(x + 9, y + 10, 2, 2);
+                            context.strokeRect(x + 27, y + 10, 2, 2);
+                            context.strokeRect(x + 18, y + 20, 2, 2);
+                            context.strokeRect(x + 9, y + 30, 2, 2);
+                            context.strokeRect(x + 27, y + 30, 2, 2);
+                            break;
+                        case 6 :
+                            context.strokeRect(x + 12, y + 10, 2, 2);
+                            context.strokeRect(x + 12, y + 20, 2, 2);
+                            context.strokeRect(x + 12, y + 30, 2, 2);
+                            context.strokeRect(x + 24, y + 10, 2, 2);
+                            context.strokeRect(x + 24, y + 20, 2, 2);
+                            context.strokeRect(x + 24, y + 30, 2, 2);
+                            break;
+                    }
+
+                    // отрисовка второй части костяшки
+                    context.strokeRect(x, y + 40, 40, 40);
+                    switch (rightpart) {
+                        case 0 :
+                            break;
+                        case 1 :
+                            context.strokeRect(x + 19, y + 40 + 19, 2, 2);
+                            break;
+                        case 2 :
+                            context.strokeRect(x + 19, y + 40 + 13, 2, 2);
+                            context.strokeRect(x + 19, y + 40 + 26, 2, 2);
+                            break;
+                        case 3 :
+                            context.strokeRect(x + 19, y + 40 + 10, 2, 2);
+                            context.strokeRect(x + 19, y + 40 + 20, 2, 2);
+                            context.strokeRect(x + 19, y + 40 + 30, 2, 2);
+                            break;
+                        case 4 :
+                            context.strokeRect(x + 13, y + 40 + 13, 2, 2);
+                            context.strokeRect(x + 25, y + 40 + 13, 2, 2);
+                            context.strokeRect(x + 13, y + 40 + 26, 2, 2);
+                            context.strokeRect(x + 25, y + 40 + 26, 2, 2);
+                            break;
+                        case 5 :
+                            context.strokeRect(x + 9, y + 40 + 10, 2, 2);
+                            context.strokeRect(x + 27, y + 40 + 10, 2, 2);
+                            context.strokeRect(x + 18, y + 40 + 20, 2, 2);
+                            context.strokeRect(x + 9, y + 40 + 30, 2, 2);
+                            context.strokeRect(x + 27, y + 40 + 30, 2, 2);
+                            break;
+                        case 6 :
+                            context.strokeRect(x + 12, y + 40 + 10, 2, 2);
+                            context.strokeRect(x + 12, y + 40 + 20, 2, 2);
+                            context.strokeRect(x + 12, y + 40 + 30, 2, 2);
+                            context.strokeRect(x + 24, y + 40 + 10, 2, 2);
+                            context.strokeRect(x + 24, y + 40 + 20, 2, 2);
+                            context.strokeRect(x + 24, y + 40 + 30, 2, 2);
+                            break;
+                    }
+                }
+
+                function drawKnuckleNotToPut(x, height, leftpart, rightpart) {
+
+                    // Высота на котороый будет отрисована костяшка
+                    let y = height;
+
+                    // отрисовка первой части костяшки
+                    context.strokeRect(x, y, 40, 40);
+                    switch (leftpart) {
+                        case 0:
+                            break;
+                        case 1 :
+                            context.strokeRect(x + 19, y + 19, 2, 2);
+                            break;
+                        case 2 :
+                            context.strokeRect(x + 19, y + 13, 2, 2);
+                            context.strokeRect(x + 19, y + 26, 2, 2);
+                            break;
+                        case 3 :
+                            context.strokeRect(x + 19, y + 10, 2, 2);
+                            context.strokeRect(x + 19, y + 20, 2, 2);
+                            context.strokeRect(x + 19, y + 30, 2, 2);
+                            break;
+                        case 4 :
+                            context.strokeRect(x + 13, y + 13, 2, 2);
+                            context.strokeRect(x + 25, y + 13, 2, 2);
+                            context.strokeRect(x + 13, y + 26, 2, 2);
+                            context.strokeRect(x + 25, y + 26, 2, 2);
+                            break;
+                        case 5 :
+                            context.strokeRect(x + 9, y + 10, 2, 2);
+                            context.strokeRect(x + 27, y + 10, 2, 2);
+                            context.strokeRect(x + 18, y + 20, 2, 2);
+                            context.strokeRect(x + 9, y + 30, 2, 2);
+                            context.strokeRect(x + 27, y + 30, 2, 2);
+                            break;
+                        case 6 :
+                            context.strokeRect(x + 12, y + 10, 2, 2);
+                            context.strokeRect(x + 12, y + 20, 2, 2);
+                            context.strokeRect(x + 12, y + 30, 2, 2);
+                            context.strokeRect(x + 24, y + 10, 2, 2);
+                            context.strokeRect(x + 24, y + 20, 2, 2);
+                            context.strokeRect(x + 24, y + 30, 2, 2);
+                            break;
+                    }
+
+                    // отрисовка второй части костяшки
+                    context.strokeRect(x, y + 40, 40, 40);
+                    switch (rightpart) {
+                        case 0 :
+                            break;
+                        case 1 :
+                            context.strokeRect(x + 19, y + 40 + 19, 2, 2);
+                            break;
+                        case 2 :
+                            context.strokeRect(x + 19, y + 40 + 13, 2, 2);
+                            context.strokeRect(x + 19, y + 40 + 26, 2, 2);
+                            break;
+                        case 3 :
+                            context.strokeRect(x + 19, y + 40 + 10, 2, 2);
+                            context.strokeRect(x + 19, y + 40 + 20, 2, 2);
+                            context.strokeRect(x + 19, y + 40 + 30, 2, 2);
+                            break;
+                        case 4 :
+                            context.strokeRect(x + 13, y + 40 + 13, 2, 2);
+                            context.strokeRect(x + 25, y + 40 + 13, 2, 2);
+                            context.strokeRect(x + 13, y + 40 + 26, 2, 2);
+                            context.strokeRect(x + 25, y + 40 + 26, 2, 2);
+                            break;
+                        case 5 :
+                            context.strokeRect(x + 9, y + 40 + 10, 2, 2);
+                            context.strokeRect(x + 27, y + 40 + 10, 2, 2);
+                            context.strokeRect(x + 18, y + 40 + 20, 2, 2);
+                            context.strokeRect(x + 9, y + 40 + 30, 2, 2);
+                            context.strokeRect(x + 27, y + 40 + 30, 2, 2);
+                            break;
+                        case 6 :
+                            context.strokeRect(x + 12, y + 40 + 10, 2, 2);
+                            context.strokeRect(x + 12, y + 40 + 20, 2, 2);
+                            context.strokeRect(x + 12, y + 40 + 30, 2, 2);
+                            context.strokeRect(x + 24, y + 40 + 10, 2, 2);
+                            context.strokeRect(x + 24, y + 40 + 20, 2, 2);
+                            context.strokeRect(x + 24, y + 40 + 30, 2, 2);
+                            break;
+                    }
+                }
+
+                function drawCompKnuckle(x, height) {
+                    context.strokeRect(x, height, 40, 40);
+                    context.strokeRect(x, height + 40, 40, 40);
+                }
+
+                function drawSequenceOnTheBoard(sequenceOfKnuckles, indexOfFirstKnuckle) {
+                    var x = canvas.width / 2 - 15;
+                    var y = canvas.height / 2 - 30;
+                    var currentIndex = indexOfFirstKnuckle;
+
+                    // Определяем нужно вверх\вниз\влево\вправо
+                    var upSequence = 0;
+                    var leftSequence = 0;
+                    var middleSequence = 1;
+                    var rightSequence = 0;
+                    var downSequence = 0;
+
+                    // Ставим первую, отправную костяшку
+                    drawVerticalKnuckle(x, y, sequenceOfKnuckles[indexOfFirstKnuckle].onePart, sequenceOfKnuckles[indexOfFirstKnuckle].secondPart);
+
+                    // X координаты поставленной костяшки
+                    var XLeftCoordinateOfCurKnuckle = x;
+                    var XRightCoordinateOfCurKnuckle = x + 30;
+
+                    // Y координаты поставленной костяшки
+                    var YUpCoordinateOfCurKnuckle = y;
+                    var YDownCoordinateOfCurKnuckle = y + 60;
+
+                    // 1 == вправо, 2 == влево, 3 == вниз, 4 == вверх
+                    var whereAreWeGoing = 1;
+
+                    // Какая была предыдущая
+                    var previousWasHorizontal = false;
+
+
+                    // Вначале отрисовывем правую часть последовательности
+                    if (currentIndex <= sequenceOfKnuckles.length) {
+                        currentIndex++;
+                        while (currentIndex < sequenceOfKnuckles.length) {
+                            // Отрисовка идет в зависимости направления, а она зависит от размера текущей последовательности костяшек на столе.
+                            switch (whereAreWeGoing) {
+
+                                // Рисуем вправо
+                                case 1:
+                                    if (middleSequence < 5) {
+                                        // Если значения разных сторон костяшек одинаковые, то рисуем вертикальную костяшку
+                                        if (sequenceOfKnuckles[currentIndex].onePart !== sequenceOfKnuckles[currentIndex].secondPart) {
+                                            // Случай если предыдущая костяшка была горизонтально поставлена
+                                            if (previousWasHorizontal) {
+                                                drawHorizontalKnuckle(XLeftCoordinateOfCurKnuckle + 60, YUpCoordinateOfCurKnuckle, sequenceOfKnuckles[currentIndex].onePart, sequenceOfKnuckles[currentIndex].secondPart);
+                                                XLeftCoordinateOfCurKnuckle += 60;
+                                                XRightCoordinateOfCurKnuckle += 60;
+                                                previousWasHorizontal = true;
+                                            }
+                                            // Случай если предыдущая костяшка была вертикально поставлена
+                                            else {
+                                                drawHorizontalKnuckle(XLeftCoordinateOfCurKnuckle + 30, YUpCoordinateOfCurKnuckle + 15, sequenceOfKnuckles[currentIndex].onePart, sequenceOfKnuckles[currentIndex].secondPart);
+                                                XLeftCoordinateOfCurKnuckle += 30;
+                                                XRightCoordinateOfCurKnuckle += 60;
+                                                YUpCoordinateOfCurKnuckle += 15;
+                                                YDownCoordinateOfCurKnuckle -= 15;
+                                                previousWasHorizontal = true;
+                                            }
+                                        } else {
+                                            drawVerticalKnuckle(XLeftCoordinateOfCurKnuckle + 60, YUpCoordinateOfCurKnuckle - 15, sequenceOfKnuckles[currentIndex].onePart, sequenceOfKnuckles[currentIndex].secondPart);
+                                            XLeftCoordinateOfCurKnuckle += 60;
+                                            XRightCoordinateOfCurKnuckle += 30;
+                                            YUpCoordinateOfCurKnuckle -= 15;
+                                            YDownCoordinateOfCurKnuckle += 15;
+                                            previousWasHorizontal = false;
+                                        }
+                                        middleSequence++;
+                                        currentIndex++;
+                                    } else {
+                                        whereAreWeGoing = 3;
+                                    }
+                                    break;
+
+                                // Рисуем влево
+                                case 2:
+                                    if (downSequence < 9) {
+                                        if (downSequence === 0) {
+                                            drawHorizontalKnuckle(XLeftCoordinateOfCurKnuckle - 60, YUpCoordinateOfCurKnuckle + 30, sequenceOfKnuckles[currentIndex].secondPart, sequenceOfKnuckles[currentIndex].onePart);
+                                            XLeftCoordinateOfCurKnuckle -= 60;
+                                            XRightCoordinateOfCurKnuckle -= 30;
+                                            YUpCoordinateOfCurKnuckle += 30;
+                                            previousWasHorizontal = true;
+                                        } else {
+                                            if (sequenceOfKnuckles[currentIndex].onePart !== sequenceOfKnuckles[currentIndex].secondPart) {
+                                                // Случай если предыдущая костяшка была горизонтально поставлена
+                                                if (previousWasHorizontal) {
+                                                    drawHorizontalKnuckle(XLeftCoordinateOfCurKnuckle - 60, YUpCoordinateOfCurKnuckle, sequenceOfKnuckles[currentIndex].secondPart, sequenceOfKnuckles[currentIndex].onePart);
+                                                    XLeftCoordinateOfCurKnuckle -= 60;
+                                                    XRightCoordinateOfCurKnuckle -= 60;
+                                                    previousWasHorizontal = true;
+                                                }
+                                                // Случай если предыдущая костяшка была вертикально поставлена
+                                                else {
+                                                    drawHorizontalKnuckle(XLeftCoordinateOfCurKnuckle - 60, YUpCoordinateOfCurKnuckle + 15, sequenceOfKnuckles[currentIndex].secondPart, sequenceOfKnuckles[currentIndex].onePart);
+                                                    XLeftCoordinateOfCurKnuckle -= 60;
+                                                    XRightCoordinateOfCurKnuckle -= 30;
+                                                    YUpCoordinateOfCurKnuckle += 15;
+                                                    YDownCoordinateOfCurKnuckle -= 15;
+                                                    previousWasHorizontal = true;
+                                                }
+                                            } else {
+                                                drawVerticalKnuckle(XLeftCoordinateOfCurKnuckle - 30, YUpCoordinateOfCurKnuckle - 15, sequenceOfKnuckles[currentIndex].secondPart, sequenceOfKnuckles[currentIndex].onePart);
+                                                XLeftCoordinateOfCurKnuckle -= 30;
+                                                XRightCoordinateOfCurKnuckle += 30;
+                                                YUpCoordinateOfCurKnuckle -= 15;
+                                                YDownCoordinateOfCurKnuckle += 15;
+                                                previousWasHorizontal = false;
+                                            }
+                                        }
+                                        downSequence++;
+                                        currentIndex++;
+                                    }
+                                    break;
+
+                                // Рисуем вниз
+                                case 3:
+                                    if (rightSequence < 3) {
+                                        if (rightSequence === 0) {
+                                            if (previousWasHorizontal) {
+                                                drawVerticalKnuckle(XLeftCoordinateOfCurKnuckle + 60, YUpCoordinateOfCurKnuckle, sequenceOfKnuckles[currentIndex].onePart, sequenceOfKnuckles[currentIndex].secondPart);
+                                                XLeftCoordinateOfCurKnuckle += 60;
+                                                XRightCoordinateOfCurKnuckle += 30;
+                                                YDownCoordinateOfCurKnuckle += 30;
+                                                previousWasHorizontal = false;
+                                            } else {
+                                                drawVerticalKnuckle(XLeftCoordinateOfCurKnuckle, YUpCoordinateOfCurKnuckle + 60, sequenceOfKnuckles[currentIndex].onePart, sequenceOfKnuckles[currentIndex].secondPart);
+                                                YUpCoordinateOfCurKnuckle += 60;
+                                                YDownCoordinateOfCurKnuckle += 60;
+                                                previousWasHorizontal = false;
+                                            }
+                                        } else {
+                                            drawVerticalKnuckle(XLeftCoordinateOfCurKnuckle, YUpCoordinateOfCurKnuckle + 60, sequenceOfKnuckles[currentIndex].onePart, sequenceOfKnuckles[currentIndex].secondPart);
+                                            XLeftCoordinateOfCurKnuckle;
+                                            XRightCoordinateOfCurKnuckle;
+                                            YUpCoordinateOfCurKnuckle += 60;
+                                            YDownCoordinateOfCurKnuckle += 60;
+                                            previousWasHorizontal = false;
+                                        }
+                                        rightSequence++;
+                                        currentIndex++;
+                                    } else {
+                                        whereAreWeGoing = 2;
+                                    }
+                                    break;
+
+                                // Рисуем вверх
+                                case 4:
+                                    break;
+                            }
+                        }
+                    }
+
+                    // Выставляем нужные координаты обратно
+                    XLeftCoordinateOfCurKnuckle = canvas.width / 2 - 15;
+                    XRightCoordinateOfCurKnuckle = XLeftCoordinateOfCurKnuckle + 30;
+
+                    YUpCoordinateOfCurKnuckle = canvas.height / 2 - 30;
+                    YDownCoordinateOfCurKnuckle = y + 60;
+
+                    // Выставляем обратно положение предыдущей костяшки
+                    previousWasHorizontal = false;
+
+                    //
+                    midcounter = 0;
+
+                    // Выставляем обратно индекс
+                    currentIndex = indexOfFirstKnuckle;
+                    // Теперь рисуем левую часть последовательности
+                    if (currentIndex > -1) {
+                        currentIndex--;
+                        whereAreWeGoing = 2;
+                        while (currentIndex > -1) {
+                            // Отрисовка идет в зависимости направления, а она зависит от размера текущей последовательности костяшек на столе.
+                            switch (whereAreWeGoing) {
+                                case 1:
+                                    if (upSequence < 9) {
+                                        if (upSequence === 0) {
+                                            if (previousWasHorizontal) {
+                                                drawHorizontalKnuckle(XLeftCoordinateOfCurKnuckle + 30, YUpCoordinateOfCurKnuckle, sequenceOfKnuckles[currentIndex].secondPart, sequenceOfKnuckles[currentIndex].onePart);
+                                                XLeftCoordinateOfCurKnuckle += 30;
+                                                XRightCoordinateOfCurKnuckle += 30;
+                                                YUpCoordinateOfCurKnuckle;
+                                                YDownCoordinateOfCurKnuckle -= 30;
+                                                previousWasHorizontal = true;
+                                            } else {
+                                                drawHorizontalKnuckle(XLeftCoordinateOfCurKnuckle + 30, YUpCoordinateOfCurKnuckle, sequenceOfKnuckles[currentIndex].secondPart, sequenceOfKnuckles[currentIndex].onePart);
+                                                XLeftCoordinateOfCurKnuckle += 30;
+                                                XRightCoordinateOfCurKnuckle += 30;
+                                                YUpCoordinateOfCurKnuckle;
+                                                YDownCoordinateOfCurKnuckle -= 30;
+                                                previousWasHorizontal = true;
+                                            }
+                                        } else {
+                                            // Если значения разных сторон костяшек не одинаковые, то рисуем горизонтальную костяшку
+                                            if (sequenceOfKnuckles[currentIndex].onePart !== sequenceOfKnuckles[currentIndex].secondPart) {
+                                                // Случай если предыдущая костяшка была горизонтально поставлена
+                                                if (previousWasHorizontal) {
+                                                    drawHorizontalKnuckle(XLeftCoordinateOfCurKnuckle + 60, YUpCoordinateOfCurKnuckle, sequenceOfKnuckles[currentIndex].secondPart, sequenceOfKnuckles[currentIndex].onePart);
+                                                    XLeftCoordinateOfCurKnuckle += 60;
+                                                    XRightCoordinateOfCurKnuckle += 60;
+                                                    YUpCoordinateOfCurKnuckle;
+                                                    YDownCoordinateOfCurKnuckle;
+                                                    previousWasHorizontal = true;
+                                                }
+                                                // Случай если предыдущая костяшка была вертикально поставлена
+                                                else {
+                                                    drawHorizontalKnuckle(XLeftCoordinateOfCurKnuckle + 30, YUpCoordinateOfCurKnuckle + 15, sequenceOfKnuckles[currentIndex].secondPart, sequenceOfKnuckles[currentIndex].onePart);
+                                                    XLeftCoordinateOfCurKnuckle += 30;
+                                                    XRightCoordinateOfCurKnuckle += 60;
+                                                    YUpCoordinateOfCurKnuckle += 15;
+                                                    YDownCoordinateOfCurKnuckle -= 15;
+                                                    previousWasHorizontal = true;
+                                                }
+                                            } else {
+                                                drawVerticalKnuckle(XLeftCoordinateOfCurKnuckle + 60, YUpCoordinateOfCurKnuckle - 15, sequenceOfKnuckles[currentIndex].secondPart, sequenceOfKnuckles[currentIndex].onePart);
+                                                XLeftCoordinateOfCurKnuckle += 60;
+                                                XRightCoordinateOfCurKnuckle += 30;
+                                                YUpCoordinateOfCurKnuckle -= 15;
+                                                YDownCoordinateOfCurKnuckle += 15;
+                                                previousWasHorizontal = false;
+                                            }
+                                        }
+                                        upSequence++;
+                                        currentIndex--;
+                                    }
+                                    break;
+
+                                // Рисуем влево
+                                case 2:
+                                    if (midcounter < 5) {
+                                        // Если значения разных сторон костяшек одинаковые, то рисуем вертикальную костяшку
+                                        if (sequenceOfKnuckles[currentIndex].onePart !== sequenceOfKnuckles[currentIndex].secondPart) {
+                                            // Случай если предыдущая костяшка была горизонтально поставлена
+                                            if (previousWasHorizontal) {
+                                                drawHorizontalKnuckle(XLeftCoordinateOfCurKnuckle - 60, YUpCoordinateOfCurKnuckle, sequenceOfKnuckles[currentIndex].onePart, sequenceOfKnuckles[currentIndex].secondPart);
+                                                XLeftCoordinateOfCurKnuckle -= 60;
+                                                XRightCoordinateOfCurKnuckle -= 60;
+                                                YUpCoordinateOfCurKnuckle;
+                                                YDownCoordinateOfCurKnuckle;
+                                                previousWasHorizontal = true;
+                                            }
+                                            // Случай если предыдущая костяшка была вертикально поставлена
+                                            else {
+                                                drawHorizontalKnuckle(XLeftCoordinateOfCurKnuckle - 60, YUpCoordinateOfCurKnuckle + 15, sequenceOfKnuckles[currentIndex].onePart, sequenceOfKnuckles[currentIndex].secondPart);
+                                                XLeftCoordinateOfCurKnuckle -= 60;
+                                                XRightCoordinateOfCurKnuckle -= 60;
+                                                YUpCoordinateOfCurKnuckle += 15;
+                                                YDownCoordinateOfCurKnuckle -= 15;
+                                                previousWasHorizontal = true;
+                                            }
+                                        } else {
+                                            drawVerticalKnuckle(XLeftCoordinateOfCurKnuckle - 30, YUpCoordinateOfCurKnuckle - 15, sequenceOfKnuckles[currentIndex].onePart, sequenceOfKnuckles[currentIndex].secondPart);
+                                            XLeftCoordinateOfCurKnuckle -= 30;
+                                            XRightCoordinateOfCurKnuckle -= 30;
+                                            YUpCoordinateOfCurKnuckle -= 15;
+                                            YDownCoordinateOfCurKnuckle += 15;
+                                            previousWasHorizontal = false;
+                                        }
+                                        midcounter++;
+                                        currentIndex--;
+                                    } else {
+                                        whereAreWeGoing = 4;
+                                    }
+                                    break;
+
+                                // Рисуем вниз
+                                case 3:
+
+                                    break;
+
+                                // Рисуем вверх
+                                case 4:
+                                    if (leftSequence < 3) {
+                                        if (leftSequence == 0) {
+                                            if (previousWasHorizontal) {
+                                                drawVerticalKnuckle(XLeftCoordinateOfCurKnuckle - 30, YUpCoordinateOfCurKnuckle - 30, sequenceOfKnuckles[currentIndex].onePart, sequenceOfKnuckles[currentIndex].secondPart);
+                                                XLeftCoordinateOfCurKnuckle -= 30;
+                                                XRightCoordinateOfCurKnuckle -= 30;
+                                                YUpCoordinateOfCurKnuckle -= 30;
+                                                YDownCoordinateOfCurKnuckle;
+                                                previousWasHorizontal = false;
+                                            } else {
+                                                drawVerticalKnuckle(XLeftCoordinateOfCurKnuckle, YUpCoordinateOfCurKnuckle - 60, sequenceOfKnuckles[currentIndex].onePart, sequenceOfKnuckles[currentIndex].secondPart);
+                                                XLeftCoordinateOfCurKnuckle;
+                                                XRightCoordinateOfCurKnuckle;
+                                                YUpCoordinateOfCurKnuckle -= 60;
+                                                YDownCoordinateOfCurKnuckle -= 60;
+                                                previousWasHorizontal = false;
+                                            }
+                                        } else {
+                                            drawVerticalKnuckle(XLeftCoordinateOfCurKnuckle, YUpCoordinateOfCurKnuckle - 60, sequenceOfKnuckles[currentIndex].onePart, sequenceOfKnuckles[currentIndex].secondPart);
+                                            XLeftCoordinateOfCurKnuckle;
+                                            XRightCoordinateOfCurKnuckle;
+                                            YUpCoordinateOfCurKnuckle -= 60;
+                                            YDownCoordinateOfCurKnuckle -= 60;
+                                            previousWasHorizontal = false;
+                                        }
+                                        leftSequence++;
+                                        currentIndex--;
+                                    } else {
+                                        whereAreWeGoing = 1;
+                                    }
+                                    break;
+                            }
+                        }
+                    }
+
+                }
+
+                function drawHorizontalKnuckle(x, y, leftpart, rightpart) {
+
+                    context.strokeRect(x, y, 30, 30);
+                    switch (leftpart) {
+                        case 0:
+                            break;
+                        case 1 :
+                            context.strokeRect(x + 14, y + 14, 2, 2);
+                            break;
+                        case 2 :
+                            context.strokeRect(x + 14, y + 9, 2, 2);
+                            context.strokeRect(x + 14, y + 18, 2, 2);
+                            break;
+                        case 3 :
+                            context.strokeRect(x + 14, y + 7, 2, 2);
+                            context.strokeRect(x + 14, y + 14, 2, 2);
+                            context.strokeRect(x + 14, y + 21, 2, 2);
+                            break;
+                        case 4 :
+                            context.strokeRect(x + 9, y + 9, 2, 2);
+                            context.strokeRect(x + 18, y + 9, 2, 2);
+                            context.strokeRect(x + 9, y + 18, 2, 2);
+                            context.strokeRect(x + 18, y + 18, 2, 2);
+                            break;
+                        case 5 :
+                            context.strokeRect(x + 9, y + 7, 2, 2);
+                            context.strokeRect(x + 18, y + 7, 2, 2);
+                            context.strokeRect(x + 14, y + 14, 2, 2);
+                            context.strokeRect(x + 9, y + 21, 2, 2);
+                            context.strokeRect(x + 18, y + 21, 2, 2);
+                            break;
+                        case 6 :
+                            context.strokeRect(x + 9, y + 7, 2, 2);
+                            context.strokeRect(x + 9, y + 14, 2, 2);
+                            context.strokeRect(x + 9, y + 21, 2, 2);
+                            context.strokeRect(x + 18, y + 7, 2, 2);
+                            context.strokeRect(x + 18, y + 14, 2, 2);
+                            context.strokeRect(x + 18, y + 21, 2, 2);
+                            break;
+                    }
+
+                    // отрисовка второй части костяшки
+                    context.strokeRect(x + 30, y, 30, 30);
+                    switch (rightpart) {
+                        case 0:
+                            break;
+                        case 1 :
+                            context.strokeRect(x + 30 + 14, y + 14, 2, 2);
+                            break;
+                        case 2 :
+                            context.strokeRect(x + 30 + 14, y + 9, 2, 2);
+                            context.strokeRect(x + 30 + 14, y + 18, 2, 2);
+                            break;
+                        case 3 :
+                            context.strokeRect(x + 30 + 14, y + 7, 2, 2);
+                            context.strokeRect(x + 30 + 14, y + 14, 2, 2);
+                            context.strokeRect(x + 30 + 14, y + 21, 2, 2);
+                            break;
+                        case 4 :
+                            context.strokeRect(x + 30 + 9, y + 9, 2, 2);
+                            context.strokeRect(x + 30 + 18, y + 9, 2, 2);
+                            context.strokeRect(x + 30 + 9, y + 18, 2, 2);
+                            context.strokeRect(x + 30 + 18, y + 18, 2, 2);
+                            break;
+                        case 5 :
+                            context.strokeRect(x + 30 + 9, y + 7, 2, 2);
+                            context.strokeRect(x + 30 + 18, y + 7, 2, 2);
+                            context.strokeRect(x + 30 + 14, y + 14, 2, 2);
+                            context.strokeRect(x + 30 + 9, y + 21, 2, 2);
+                            context.strokeRect(x + 30 + 18, y + 21, 2, 2);
+                            break;
+                        case 6 :
+                            context.strokeRect(x + 30 + 9, y + 7, 2, 2);
+                            context.strokeRect(x + 30 + 9, y + 14, 2, 2);
+                            context.strokeRect(x + 30 + 9, y + 21, 2, 2);
+                            context.strokeRect(x + 30 + 18, y + 7, 2, 2);
+                            context.strokeRect(x + 30 + 18, y + 14, 2, 2);
+                            context.strokeRect(x + 30 + 18, y + 21, 2, 2);
+                            break;
+                    }
+                }
+
+                function drawVerticalKnuckle(x, y, leftpart, rightpart) {
+
+                    context.strokeRect(x, y, 30, 30);
+                    switch (leftpart) {
+                        case 0:
+                            break;
+                        case 1 :
+                            context.strokeRect(x + 14, y + 14, 2, 2);
+                            break;
+                        case 2 :
+                            context.strokeRect(x + 14, y + 9, 2, 2);
+                            context.strokeRect(x + 14, y + 18, 2, 2);
+                            break;
+                        case 3 :
+                            context.strokeRect(x + 14, y + 7, 2, 2);
+                            context.strokeRect(x + 14, y + 14, 2, 2);
+                            context.strokeRect(x + 14, y + 21, 2, 2);
+                            break;
+                        case 4 :
+                            context.strokeRect(x + 9, y + 9, 2, 2);
+                            context.strokeRect(x + 18, y + 9, 2, 2);
+                            context.strokeRect(x + 9, y + 18, 2, 2);
+                            context.strokeRect(x + 18, y + 18, 2, 2);
+                            break;
+                        case 5 :
+                            context.strokeRect(x + 9, y + 7, 2, 2);
+                            context.strokeRect(x + 18, y + 7, 2, 2);
+                            context.strokeRect(x + 14, y + 14, 2, 2);
+                            context.strokeRect(x + 9, y + 21, 2, 2);
+                            context.strokeRect(x + 18, y + 21, 2, 2);
+                            break;
+                        case 6 :
+                            context.strokeRect(x + 9, y + 7, 2, 2);
+                            context.strokeRect(x + 9, y + 14, 2, 2);
+                            context.strokeRect(x + 9, y + 21, 2, 2);
+                            context.strokeRect(x + 18, y + 7, 2, 2);
+                            context.strokeRect(x + 18, y + 14, 2, 2);
+                            context.strokeRect(x + 18, y + 21, 2, 2);
+                            break;
+                    }
+
+                    // отрисовка второй части костяшки
+                    context.strokeRect(x, y + 30, 30, 30);
+                    switch (rightpart) {
+                        case 0:
+                            break;
+                        case 1 :
+                            context.strokeRect(x + 14, y + 30 + 14, 2, 2);
+                            break;
+                        case 2 :
+                            context.strokeRect(x + 14, y + 30 + 9, 2, 2);
+                            context.strokeRect(x + 14, y + 30 + 18, 2, 2);
+                            break;
+                        case 3 :
+                            context.strokeRect(x + 14, y + 30 + 7, 2, 2);
+                            context.strokeRect(x + 14, y + 30 + 14, 2, 2);
+                            context.strokeRect(x + 14, y + 30 + 21, 2, 2);
+                            break;
+                        case 4 :
+                            context.strokeRect(x + 9, y + 30 + 9, 2, 2);
+                            context.strokeRect(x + 18, y + 30 + 9, 2, 2);
+                            context.strokeRect(x + 9, y + 30 + 18, 2, 2);
+                            context.strokeRect(x + 18, y + 30 + 18, 2, 2);
+                            break;
+                        case 5 :
+                            context.strokeRect(x + 9, y + 30 + 7, 2, 2);
+                            context.strokeRect(x + 18, y + 30 + 7, 2, 2);
+                            context.strokeRect(x + 14, y + 30 + 14, 2, 2);
+                            context.strokeRect(x + 9, y + 30 + 21, 2, 2);
+                            context.strokeRect(x + 18, y + 30 + 21, 2, 2);
+                            break;
+                        case 6 :
+                            context.strokeRect(x + 9, y + 30 + 7, 2, 2);
+                            context.strokeRect(x + 9, y + 30 + 14, 2, 2);
+                            context.strokeRect(x + 9, y + 30 + 21, 2, 2);
+                            context.strokeRect(x + 18, y + 30 + 7, 2, 2);
+                            context.strokeRect(x + 18, y + 30 + 14, 2, 2);
+                            context.strokeRect(x + 18, y + 30 + 21, 2, 2);
+                            break;
+                    }
+                }
+
+                function saveToPC() {
+                    // Строка с данными
+                    let stringToSave = "";
+                    // Последовательность костяшек на столе
+                    let sec = /*[[${gamePVEAccess.getSequenceOnBoard()}]]*/ 'defalt';
+                    // Последовательность которой игроку можно пойти
+                    let playerSec1 = /*[[${gamePVEAccess.getPlayersKnucklesToPut()}]]*/ 'defalt';
+                    // Последовательность которой игроку нельзя пойти
+                    let playerSec2 = /*[[${gamePVEAccess.getPlayersKnucklesNotToPut()}]]*/ 'defalt';
+                    // Последовательность костяшек у компьютера
+                    let compSec = /*[[${gamePVEAccess.getComputerKnuckles()}]]*/ 'defalt';
+                    // Костяшки на базаре
+                    let market = /*[[${gamePVEAccess.getMarket()}]]*/ 'defalt';
+                    // Индекс костяшки с которой надо начинать отрисовку
+                    let indexOfStartSec = /*[[${gamePVEAccess.getIndexOfStartInSequence()}]]*/ 'defalt';
+
+                    if (sec.length !== 0) {
+                        for (let i = 0; i !== sec.length; i++) {
+                            stringToSave += sec[i].onePart;
+                            stringToSave += sec[i].secondPart;
+                            stringToSave += " ";
+                        }
+                        stringToSave += '\n';
+                    } else {
+                        stringToSave = "null\n";
+                    }
+
+                    if (market.length !== 0) {
+                        for (let i = 0; i !== market.length; i++) {
+                            stringToSave += market[i].onePart;
+                            stringToSave += market[i].secondPart;
+                            stringToSave += " ";
+                        }
+                        stringToSave += '\n';
+                    } else {
+                        stringToSave = "null\n";
+                    }
+
+                    for (let i = 0; i !== playerSec1.length; i++) {
+                        stringToSave += playerSec1[i].onePart;
+                        stringToSave += playerSec1[i].secondPart;
+                        stringToSave += " ";
+                    }
+
+                    for (let i = 0; i !== playerSec2.length; i++) {
+                        stringToSave += playerSec2[i].onePart;
+                        stringToSave += playerSec2[i].secondPart;
+                        stringToSave += " ";
+                    }
+                    stringToSave += '\n';
+
+                    for (let i = 0; i !== compSec.length; i++) {
+                        stringToSave += compSec[i].onePart;
+                        stringToSave += compSec[i].secondPart;
+                        stringToSave += " ";
+                    }
+                    stringToSave += '\n';
+
+                    stringToSave += indexOfStartSec;
+
+                    // Сами инструкции для сохранения в файл
+                    let blob = new Blob([stringToSave], {type: 'text/plain'});
+                    let link = document.createElement('a');
+                    link.setAttribute('href', URL.createObjectURL(blob));
+                    link.setAttribute('download', 'Save');
+                    link.click();
+                }
+
+                canvas.onclick = e => {
+                    figures.forEach(f => {
+                        if (context.isPointInPath(f, e.offsetX, e.offsetY)) {
+                            ind = figures.indexOf(f);
+                            console.log(ind);
+                            addInd();
+                        }
+                    })
+                }
+
+                document.querySelector("#savebutton").onclick = function (){
+                    alert("Would you save your current game?");
+                    saveToPC();
+                    return false;
+                }
+
+                document.querySelector('#update').onclick = function (){
+                    var userKnucklesToPut = /*[[${gamePVEAccess.getPlayersKnucklesToPut()}]]*/ 'defalt';
+
+                    if(document.getElementById('getPlayersTurn').value < 0 || document.getElementById('getPlayersTurn').value > userKnucklesToPut.length-1 || document.getElementById('getPlayersTurn').value > 9) {
+                        alert("Would enter wrong data");
+                    }
+                    else{
+                        let link = document.getElementById('send');
+                        link.click();
+                    }
+                }
+            </script>
+
+        </div>
+
+    </form>
+</div>
+
+</div>
+<div id="footer" style="position: static;">
+
+    <p>Contacts: +7-951-654-32-48</p>
+    <p>Copyright © Me, 2022</p>
+</div>
+</body>
+</html>

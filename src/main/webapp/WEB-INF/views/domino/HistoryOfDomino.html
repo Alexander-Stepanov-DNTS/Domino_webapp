@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Domino Suai</title>
+
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+            html, body, div, span, h1, h2, h3, h4, h5, h6, p, a, ul, li{
+
+                margin: 0;
+                padding: 0;
+                border: 0;
+                font-size: 100%;
+                vertical-align: baseline;
+            }
+            body {
+                font-family: Verdana, Arial, sans-serif;
+                background-color: #f7f7f7;
+            }
+            #header{
+                background-color: #93b874;
+            }
+            #header h1 {
+                font-size: 24px;
+                text-transform: uppercase;
+                font-weight: bold;
+                padding: 30px 30px 30px 10px;
+                clear: both;
+            }
+            #nav {
+                background-color: #8db071;
+                border-top: 1px solid #ccc;
+                border-bottom: 1px solid #ccc;
+            }
+            #nav li {
+                float: left;
+                list-style: none;
+            }
+            #nav a {
+                display: block;
+                color: black;
+                padding: 10px 25px;
+                text-decoration: none;
+                border-right: 1px solid #ccc;
+            }
+            #nav li:last-child a {
+                border-right: none;
+            }
+            #nav a:hover {
+                font-weight: bold;
+            }
+            #nav:after {
+                content: " ";
+                display: table;
+                clear: both;
+            }
+            .wrapper{
+                background-color: #f7f7f7;
+            }
+            .aside h2 {
+                font-size: 0.95em;
+                margin-top: 15px;
+            }
+            .aside h3 {
+                font-size: 0.85em;
+                margin-top: 10px;
+            }
+            .aside p, .aside li {
+                font-size: .75em;
+                margin-top: 10px;
+            }
+            .aside li{
+                list-style-type: none;
+            }
+            #sidebar1 {
+                float: left;
+                width: 20%;
+                padding: 0 10px 0 20px;
+            }
+            #sidebar2 {
+                float: right;
+                width: 20%;
+                padding: 0 20px 0 10px;
+            }
+            #article{
+                background-color: #fafafa;
+                border-left: 1px solid #ccc;
+                border-right: 1px solid #ccc;
+                border-bottom: 1px solid #ccc;
+                margin-left: 20%;
+                margin-right: 20%;
+                padding: 15px;
+                width: 60%;
+            }
+            #article:after{
+                clear:both;
+                display:table;
+                content:'';
+            }
+            #article h2{
+                font-size: 1.3em;
+                margin-bottom:15px;
+            }
+            #article p{
+                line-height: 150%;
+                margin-bottom: 15px;
+            }
+            #footer{
+                border-top: 1px solid #ccc;
+                font-size: .8em;
+                text-align: center;
+                padding: 10px 10px 10px 10px;
+                background-color: #f7f7f7;
+                position: absolute;
+                bottom: 0;
+                width: 100%;
+            }
+            #nav ul, #header h1, .wrapper, #footer p {
+                max-width: 1400px;
+                margin: 0 auto;
+            }
+            .wrapper, #nav, #header, #footer{
+                min-width: 768px;
+            }
+            .myCanvas {
+                padding: 2px;
+                border: 1px solid #ccc;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="header">
+            <h1>Domino Suai</h1>
+            <div id="nav">
+                <ul>
+                    <li><a href="/domino/MainPage">Main page</a></li>
+                    <li><a href="/domino/HistoryOfDomino">History of Domino</a></li>
+                    <li><a href="/domino/StartGame">Start game</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="wrapper">
+			
+            <div id="sidebar1" class="aside">
+                <h2>Domino Competitions</h2>
+                <p>There is a domino world championship in which the strongest players of the planet participate.
+                    The first championship was held in 2003 in Havana.</p>
+                </div>
+			
+            <div id="sidebar2" class="aside">
+                <h2>Interesting fact!</h2>
+                <p>By the way, despite all the intellectual nature of this popular game,
+                    it caused so many emotions and feelings that in the USSR it was tacitly attributed to gambling.
+                    There are cases when the saleswomen of a sports store refused to sell
+                    classic dominoes to children because children were not allowed to gamble.</p>
+            </div>
+			
+            <div id="article">
+                <h2>The history of the domino game</h2>
+                <p>Domino is a board game in which a chain of knuckles ("bones", "stones") touching halves with the same number of dots denoting the number of points is built.</p>
+                <p>The roots of the game of dominoes go back to China, it was there that bones appeared in the form of plates with red and white dots. 
+				The local, original version of domino is still widely popular there.</p>
+				<p>In the eighteenth century, the game was brought to Italy and modified. The word domino, which the game was called in Italy, is the same root as the Italian (Ital. domino)
+				and the Latin (Latin dominus) word meaning Lord. There are several versions of why it happened. Fasmer believed that this is due to the fact that 
+				the one who first lays out all the dice becomes domino, i.e. "master". According to another version, the game of dominoes, 
+				unlike other gambling games, was allowed in Catholic monasteries, and there, as a rule, any business began with "praising the Lord."</p>
+            </div>
+			
+        </div>
+        <div id="footer">
+            <p>Contacts: +7-951-654-32-48</p>
+            <p>Copyright © Me, 2022</p>
+        </div>
+    </body>
+</html>
